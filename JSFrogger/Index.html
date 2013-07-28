@@ -29,10 +29,14 @@
             var loadProgressLabel;
             var loadingBarContainer;
             var background;
+            var score;
+            var timeLeft;
+
             function init() {
                 //find canvas and load images, wait for last image to load
                 canvas = document.getElementById("mCanv");
-
+                score = 0;
+                timeLeft = 0;
                 // create a new stage and point it at our canvas:
                 stage = new createjs.Stage(canvas);
                 // grab canvas width and height for later calculations:
@@ -122,6 +126,8 @@
                 stage.removeAllChildren();
                 createjs.Ticker.removeAllListeners();
                 stage.update();
+                score = 0;
+                timeLeft = 0;
             }
 
 
@@ -152,7 +158,7 @@
                 createjs.Ticker.addListener(window);
                 // Best Framerate targeted (60 FPS)
                 createjs.Ticker.useRAF = true;
-                createjs.Ticker.setFPS(60);
+                createjs.Ticker.setFPS(30);
             }
 
             function tick() {
