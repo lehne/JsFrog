@@ -1,17 +1,15 @@
 ﻿(function (window) {
-    function Frog(frogName, imgFrog, x_end) {
-        this.initialize(frogName, imgFrog, x_end);
+    function Vehicle(vehicleName, imgVehicle, x_end) {
+        this.initialize(vehicleName, imgVehicle, x_end);
     }
-    Frog.prototype = new createjs.BitmapAnimation();
+    Vehicle.prototype = new createjs.BitmapAnimation();
 
     // public properties:
-    Frog.prototype.IDLEWAITTIME = 40;
-    Frog.prototype.bounds = 0; //visual radial size
-    Frog.prototype.hit = 0;     //average radial disparity
-    Frog.prototype.alive = true;
-    Frog.prototype.mustMove = false;
+    Vehicle.prototype.IDLEWAITTIME = 40;
+    Vehicle.prototype.bounds = 0; //visual radial size
+    Vehicle.prototype.hit = 0;     //average radial disparity
     // constructor:
-    Frog.prototype.BitmapAnimation_initialize = Frog.prototype.initialize; //unique to avoid overiding base class
+    Vehicle.prototype.BitmapAnimation_initialize = Vehicle.prototype.initialize; //unique to avoid overiding base class
 
     // variable members to handle the idle state
     // and the time to wait before walking again
@@ -20,9 +18,9 @@
 
     var quaterFrameSize;
 
-    Frog.prototype.initialize = function (frogName, imgFrog, x_end) {
+    Vehicle.prototype.initialize = function (vehicleName, imgVehicle, x_end) {
         var localSpriteSheet = new createjs.SpriteSheet({
-            images: [imgFrog],
+            images: [imgVehicle],
             frames: { width: 30, height: 30, count: 8,regX: 15,regY:15 },
             animations: {
                 // start, end, next, frequency
@@ -43,14 +41,14 @@
         // start playing the first sequence:
         this.gotoAndPlay("idle");     //animate
 
-        this.name = frogName;
+        this.name = vehicleName;
         // 1 = right & -1 = left and 2 = up and -2 = down
-        this.direction = 2;
+        this.direction = -1;
         // starting directly at the first frame of the walk_h sequence
         this.currentFrame = 0;
     }
 
-    Frog.prototype.tick = function () {
+    Vehicle.prototype.tick = function () {
         if (!this.isInIdleMode) {
             // Moving the sprite based on the direction & the speed
             var moveDistance = 32;
@@ -98,11 +96,11 @@
         }
     }
 
-    Frog.prototype.hitPoint = function (tX, tY) {
+    Vehicle.prototype.hitPoint = function (tX, tY) {
         return this.hitRadius(tX, tY, 0);
     }
 
-    Frog.prototype.hitRadius = function (tX, tY, tHit) {
+    Vehicle.prototype.hitRadius = function (tX, tY, tHit) {
         //early returns speed it up
         if (tX - tHit > this.x + this.hit) { return; }
         if (tX + tHit < this.x - this.hit) { return; }
@@ -113,5 +111,5 @@
         return this.hit + tHit > Math.sqrt(Math.pow(Math.abs(this.x - tX), 2) + Math.pow(Math.abs(this.y - tY), 2));
     }
 
-    window.Frog = Frog;
+    window.Vehicle = Vehicle;
 } (window));

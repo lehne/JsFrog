@@ -8,6 +8,7 @@
 		<meta name="description" content="">
         <script src="http://code.createjs.com/createjs-2013.05.14.min.js" type="text/javascript" ></script>
         <script src="scripts/Frog.js" type="text/javascript" ></script>
+        <script src="scripts/LilyPad.js" type="text/javascript" ></script>
         <script type="text/javascript">
             var KEYCODE_SPACE = 32; 	//usefull keycode
             var KEYCODE_UP = 38; 	//usefull keycode
@@ -31,6 +32,8 @@
             var background;
             var score;
             var timeLeft;
+            var LilyPads;
+            var lilyPadImage;
 
             function init() {
                 //find canvas and load images, wait for last image to load
@@ -84,7 +87,10 @@
                 //adding our files to the queue
                 preload.loadFile({ id: "background", src: "art/bkgd.png" });
                 preload.loadFile({ id: "frog", src: "art/frog.png"});
-
+                preload.loadFile({ id: "topGrass", src: "art/topGrass.png" });
+                preload.loadFile({ id: "car", src: "art/car.png" });
+                preload.loadFile({ id: "carBlue", src: "art/carBlue.png" });
+                preload.loadFile({ id: "lilyPad", src: "art/lilyPad.png" });
                 stage.update();
             }
 
@@ -105,7 +111,7 @@
                 backgroundImage = preload.getResult("background");
                 background = new createjs.Bitmap(backgroundImage);
                 frogImage = preload.getResult("frog");
-
+                lilyPadImage = preload.getResult("lilyPad");
                 //changing the label accordingly and updating the stage to show it
                 loadProgressLabel.text = "Loading complete click to start";
                 stage.update();
@@ -146,6 +152,18 @@
                 // Our hero can be moved with the arrow keys (left, right, up, down)
                 document.onkeydown = handleKeyDown;
                 document.onkeyup = handleKeyUp;
+                LilyPads = new Array();
+                for (i = 0; i < 6; i++) {
+                    var lilPad = new LilyPad("lilyPad" + i, lilyPadImage, screen_width);
+                    if (i == 0) {
+                        lilPad.x = 34;
+                    } else {
+                        lilPad.x = 34 + (96 * i);
+                    }
+                    lilPad.y = 78.5;
+                    LilyPads[i] = lilPad;
+                    stage.addChild(LilyPads[i]);
+                }
 
                 // Creating the Hero
                 Hero = new Frog("frog",frogImage, screen_width);
