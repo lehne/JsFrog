@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
 <head>
 		<title>JavaScript and Html5 Frogger Game</title>
@@ -126,12 +126,14 @@
 
 
             function startGame() {
+                stage.addChild(background);
+
                 var scoreDisplay = new createjs.Text();
                 scoreDisplay.textAlign = "right";
-                scoreDisplay.x = 438;
-                scoreDisplay.y = 14;
-                scoreDisplay.font = "bold 24px monospace";
-                scoreDisplay.color = "#00FF33";
+                scoreDisplay.x = 135;
+                scoreDisplay.y = 16;
+                scoreDisplay.font = "bold 20px monospace";
+                scoreDisplay.color = "#ff0000";
                 scoreDisplay.text = "000000";
                 stage.addChild(scoreDisplay);
 
@@ -141,10 +143,8 @@
 
                 // Creating the Hero
                 Hero = new Frog("frog",frogImage, screen_width);
-                Hero.x = 50;
-                Hero.y = 50;
-                stage.addChild(background);
-
+                Hero.x = 212;
+                Hero.y = 484;
                 stage.addChild(Hero);
 
                 // we want to do some work before we update the canvas,
@@ -177,6 +177,7 @@
                     case KEYCODE_DOWN:
                         if (Hero.alive) {
                             Hero.direction = -2;
+                            Hero.mustMove = true;
                             Hero.isInIdleMode = false;
                             Hero.gotoAndPlay("hop_v");
                         }
@@ -184,6 +185,7 @@
                     case KEYCODE_LEFT:
                         if (Hero.alive) {
                             Hero.direction = -1;
+                            Hero.mustMove = true;
                             Hero.isInIdleMode = false;
                             Hero.gotoAndPlay("idle");
                         }
@@ -191,6 +193,7 @@
                     case KEYCODE_UP:
                         if (Hero.alive) {
                             Hero.direction = 2;
+                            Hero.mustMove = true;
                             Hero.isInIdleMode = false;
                             Hero.gotoAndPlay("hop");
                         }
@@ -198,6 +201,7 @@
                     case KEYCODE_RIGHT:
                         if (Hero.alive) {
                             Hero.direction = 1;
+                            Hero.mustMove = true;
                             Hero.isInIdleMode = false;
                             Hero.gotoAndPlay("idle");
                         }

@@ -9,6 +9,7 @@
     Frog.prototype.bounds = 0; //visual radial size
     Frog.prototype.hit = 0;     //average radial disparity
     Frog.prototype.alive = true;
+    Frog.prototype.mustMove = false;
     // constructor:
     Frog.prototype.BitmapAnimation_initialize = Frog.prototype.initialize; //unique to avoid overiding base class
 
@@ -26,7 +27,7 @@
             animations: {
                 // start, end, next, frequency
                 hop: [0, 3, "idle"],
-                idle: 13
+                idle: 0
             }
         });
 
@@ -50,17 +51,19 @@
     Frog.prototype.tick = function () {
         if (!this.isInIdleMode) {
             // Moving the sprite based on the direction & the speed
-            var moveDistance = 30;
-            if (this.direction == -2) {
-                this.y += -moveDistance;
-            } else if (this.direction == -1) {
-                this.x += -moveDistance;
-            } else if (this.direction == 1) {
-                this.x += moveDistance;
-            } else if (this.direction == 2) {
-                this.y += moveDistance;
+            var moveDistance = 32;
+            if (this.mustMove == true) {
+                if (this.direction == -2) {
+                    this.y += moveDistance;
+                } else if (this.direction == -1) {
+                    this.x -= moveDistance;
+                } else if (this.direction == 1) {
+                    this.x += moveDistance;
+                } else if (this.direction == 2) {
+                    this.y -= moveDistance;
+                }
+                this.mustMove = false;
             }
-
             // Hit testing the screen width, otherwise our sprite would disappear
             if (this.x >= this.x_end - (quaterFrameSize + 1) || this.x < (quaterFrameSize + 1)) {
                 this.gotoAndPlay("idle");
