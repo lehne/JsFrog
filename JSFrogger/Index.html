@@ -143,8 +143,8 @@
 
                 // Creating the Hero
                 Hero = new Frog("frog",frogImage, screen_width);
-                Hero.x = 212;
-                Hero.y = 484;
+                Hero.x = 225;
+                Hero.y = 499;
                 stage.addChild(Hero);
 
                 // we want to do some work before we update the canvas,
@@ -187,7 +187,7 @@
                             Hero.direction = -1;
                             Hero.mustMove = true;
                             Hero.isInIdleMode = false;
-                            Hero.gotoAndPlay("idle");
+                            Hero.gotoAndPlay("hopH_h");
                         }
                         break;
                     case KEYCODE_UP:
@@ -203,7 +203,7 @@
                             Hero.direction = 1;
                             Hero.mustMove = true;
                             Hero.isInIdleMode = false;
-                            Hero.gotoAndPlay("idle");
+                            Hero.gotoAndPlay("hopH");
                         }
                         break;
                 }

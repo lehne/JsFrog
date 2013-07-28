@@ -23,15 +23,17 @@
     Frog.prototype.initialize = function (frogName, imgFrog, x_end) {
         var localSpriteSheet = new createjs.SpriteSheet({
             images: [imgFrog],
-            frames: { width: 26, height: 30, count: 4, regX: 0, regY: 0 },
+            frames: { width: 30, height: 30, count: 8,regX: 15,regY:15 },
             animations: {
                 // start, end, next, frequency
                 hop: [0, 3, "idle"],
-                idle: 0
+                hopH: [4,7,"idleH"],
+                idle: 0,
+                idleH: 4
             }
         });
 
-        createjs.SpriteSheetUtils.addFlippedFrames(localSpriteSheet, true, false, false);
+        createjs.SpriteSheetUtils.addFlippedFrames(localSpriteSheet, true, true, false);
 
         this.BitmapAnimation_initialize(localSpriteSheet);
         this.x_end = x_end;
