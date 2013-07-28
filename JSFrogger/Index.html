@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html>
+<head>
+		<title>JavaScript and Html5 Frogger Game</title>
+		
+		<!-- Meta Data -->
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<meta name="description" content="">
+        <script src="http://code.createjs.com/createjs-2013.05.14.min.js" type="text/javascript" ></script>
+        <script src="scripts/Frog.js" type="text/javascript" ></script>
+        <script type="text/javascript">
+            var KEYCODE_SPACE = 32; 	//usefull keycode
+            var KEYCODE_UP = 38; 	//usefull keycode
+            var KEYCODE_LEFT = 37; 	//usefull keycode
+            var KEYCODE_RIGHT = 39; 	//usefull keycode
+            var KEYCODE_DOWN = 40; 	//usefull keycode
+            var KEYCODE_W = 87; 		//usefull keycode
+            var KEYCODE_A = 65; 		//usefull keycode
+            var KEYCODE_D = 68; 		//usefull keycode
+
+            var canvas;
+            var stage;
+            var screen_width;
+            var screen_height;
+            var bmpSeq;
+            var backgroundImage, frogImage;
+            var Monsters;
+            var Hero;
+            var loadProgressLabel;
+            var loadingBarContainer;
+            var background;
+            function init() {
+                //find canvas and load images, wait for last image to load
+                canvas = document.getElementById("mCanv");
+
+                // create a new stage and point it at our canvas:
+                stage = new createjs.Stage(canvas);
+                // grab canvas width and height for later calculations:
+                screen_width = canvas.width;
+                screen_height = canvas.height;
+
+                //creating the progress label
+                loadProgressLabel = new createjs.Text("", "18px Verdana", "black");
+                loadProgressLabel.lineWidth = 200;
+                loadProgressLabel.textAlign = "center";
+                loadProgressLabel.x = canvas.width / 2;
+                loadProgressLabel.y = 50;
+                stage.addChild(loadProgressLabel);
+
+                //container that holds all the elements of the loading bar
+                loadingBarContainer = new createjs.Container();
+
+                //the height width and color of the loading bar
+                loadingBarHeight = 20;
+                loadingBarWidth = 300;
+                LoadingBarColor = createjs.Graphics.getRGB(0, 0, 0);
+
+                //creating the loading bar   
+                loadingBar = new createjs.Shape();
+                loadingBar.graphics.beginFill(LoadingBarColor).drawRect(0, 0, 1, loadingBarHeight).endFill();
+
+                //creating the frame around the loading bar
+                frame = new createjs.Shape();
+                padding = 3;
+                frame.graphics.setStrokeStyle(1).beginStroke(LoadingBarColor).drawRect(-padding / 2, -padding / 2, loadingBarWidth + padding, loadingBarHeight + padding).endStroke();
+
+                //adding the loading bar and the frame to our container and placing it on the desired position on the canvas
+                loadingBarContainer.addChild(loadingBar, frame);
+                loadingBarContainer.x = Math.round(canvas.width / 2 - loadingBarWidth / 2);
+                loadingBarContainer.y = 100;
+
+                //adding the container with the elements to our stage
+                stage.addChild(loadingBarContainer);
+
+                //creating the loading queue and the events for progress and completion
+                preload = new createjs.LoadQueue(false);
+                preload.addEventListener("complete", handleComplete);
+                preload.addEventListener("progress", handleProgress);
+
+                //adding our files to the queue
+                preload.loadFile({ id: "background", src: "art/bkgd.png" });
+                preload.loadFile({ id: "frog", src: "art/frog.png"});
+
+                stage.update();
+            }
+
+            //this function is called every time the progress of our loading changes
+            function handleProgress() {
+                //changing the length of our loading bar accordingly
+                loadingBar.scaleX = preload.progress * loadingBarWidth;
+                //and the precentage in the loading label
+                progresPrecentage = Math.round(preload.progress * 100);
+                loadProgressLabel.text = progresPrecentage + "% Loaded";
+                //updating the stage to draw the changes
+                stage.update();
+            }
+
+            //this function is called when everyhing is loaded
+            function handleComplete() {
+                //getting the loaded images
+                backgroundImage = preload.getResult("background");
+                background = new createjs.Bitmap(backgroundImage);
+                frogImage = preload.getResult("frog");
+
+                //changing the label accordingly and updating the stage to show it
+                loadProgressLabel.text = "Loading complete click to start";
+                stage.update();
+
+                //adding an click event listner to our canvas so that we start our game on a mouse click
+                canvas.addEventListener("click", handleClick);
+            }
+
+            function handleClick() {
+                //on click we call our start(); function
+                startGame();
+                //we remove the progres label and loading bar and also remove the click event listener
+                stage.removeChild(loadProgressLabel, loadingBarContainer);
+                canvas.removeEventListener("click", handleClick);
+            }
+
+            function reset() {
+                stage.removeAllChildren();
+                createjs.Ticker.removeAllListeners();
+                stage.update();
+            }
+
+
+            function startGame() {
+                var scoreDisplay = new createjs.Text();
+                scoreDisplay.textAlign = "right";
+                scoreDisplay.x = 438;
+                scoreDisplay.y = 14;
+                scoreDisplay.font = "bold 24px monospace";
+                scoreDisplay.color = "#00FF33";
+                scoreDisplay.text = "000000";
+                stage.addChild(scoreDisplay);
+
+                // Our hero can be moved with the arrow keys (left, right, up, down)
+                document.onkeydown = handleKeyDown;
+                document.onkeyup = handleKeyUp;
+
+                // Creating the Hero
+                Hero = new Frog("frog",frogImage, screen_width);
+                Hero.x = 50;
+                Hero.y = 50;
+                stage.addChild(background);
+
+                stage.addChild(Hero);
+
+                // we want to do some work before we update the canvas,
+                // otherwise we could use Ticker.addListener(stage);
+                createjs.Ticker.addListener(window);
+                // Best Framerate targeted (60 FPS)
+                createjs.Ticker.useRAF = true;
+                createjs.Ticker.setFPS(60);
+            }
+
+            function tick() {
+
+                // Update logic of the hero
+                Hero.tick();
+
+                // update the stage:
+                stage.update();
+            }
+
+            function handleKeyDown(e) {
+                //cross browser issues exist
+                if (!e) { var e = window.event; }
+                
+            }
+
+            function handleKeyUp(e) {
+                //cross browser issues exist
+                if (!e) { var e = window.event; }
+                switch (e.keyCode) {
+                    case KEYCODE_DOWN:
+                        if (Hero.alive) {
+                            Hero.direction = -2;
+                            Hero.isInIdleMode = false;
+                            Hero.gotoAndPlay("hop_v");
+                        }
+                        break;
+                    case KEYCODE_LEFT:
+                        if (Hero.alive) {
+                            Hero.direction = -1;
+                            Hero.isInIdleMode = false;
+                            Hero.gotoAndPlay("idle");
+                        }
+                        break;
+                    case KEYCODE_UP:
+                        if (Hero.alive) {
+                            Hero.direction = 2;
+                            Hero.isInIdleMode = false;
+                            Hero.gotoAndPlay("hop");
+                        }
+                        break;
+                    case KEYCODE_RIGHT:
+                        if (Hero.alive) {
+                            Hero.direction = 1;
+                            Hero.isInIdleMode = false;
+                            Hero.gotoAndPlay("idle");
+                        }
+                        break;
+                }
+            }
+        </script>
+        <style type="text/css">
+        body
+        {
+        	background-color:Black;
+        }
+        canvas
+        {
+        	background-color:White;
+        }
+        </style>
+        </head>
+        <body onload="init()">
+            <canvas id="mCanv" width="448" height="512">
+            Alternative Content
+            </canvas>
+        </body>
+</html>
