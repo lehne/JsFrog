@@ -33,7 +33,7 @@
         quaterFrameSize = this.spriteSheet.getFrame(0).rect.width / 4;
 
         // start playing the first sequence:
-        this.gotoAndPlay("idle"); 	//animate
+        this.gotoAndPlay("empty"); 	//animate
         this.isInIdleMode = true;
 
         // set up a shadow. Note that shadows are ridiculously expensive. You could display hundreds

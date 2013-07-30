@@ -9,6 +9,8 @@
         <script src="http://code.createjs.com/createjs-2013.05.14.min.js" type="text/javascript" ></script>
         <script src="scripts/Frog.js" type="text/javascript" ></script>
         <script src="scripts/LilyPad.js" type="text/javascript" ></script>
+        <script src="scripts/ndgmr.Collision.js" type="text/javascript" ></script>
+        <script src="scripts/Vehicle.js" type="text/javascript" ></script>
         <script type="text/javascript">
             var KEYCODE_SPACE = 32; 	//usefull keycode
             var KEYCODE_UP = 38; 	//usefull keycode
@@ -34,6 +36,9 @@
             var timeLeft;
             var LilyPads;
             var lilyPadImage;
+            var scoreDisplay;
+            collisionMethod = ndgmr.checkPixelCollision;
+            window.alphaThresh = 0.75;
 
             function init() {
                 //find canvas and load images, wait for last image to load
@@ -140,7 +145,7 @@
             function startGame() {
                 stage.addChild(background);
 
-                var scoreDisplay = new createjs.Text();
+                scoreDisplay = new createjs.Text();
                 scoreDisplay.textAlign = "right";
                 scoreDisplay.x = 135;
                 scoreDisplay.y = 16;
@@ -180,9 +185,21 @@
             }
 
             function tick() {
+                for (i = 0; i < 6; i++) {
+                    var lilyPad = LilyPads[i];
+                    var intersection = collisionMethod(Hero, lilyPad, window.alphaThresh);
+                    if (intersection) {
+                        Hero.x = 225;
+                        Hero.y = 499;
+                        score += 225;
+                        scoreDisplay.text = score;
+                        lilyPad.gotoAndPlay("frog");
+                    }
+                }
 
                 // Update logic of the hero
                 Hero.tick();
+
 
                 // update the stage:
                 stage.update();
