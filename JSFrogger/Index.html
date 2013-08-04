@@ -36,7 +36,11 @@
             var timeLeft;
             var LilyPads;
             var lilyPadImage;
+            var TopGrass;
             var scoreDisplay;
+            var Lives;
+            var DeathSprite;
+
             collisionMethod = ndgmr.checkPixelCollision;
             window.alphaThresh = 0.75;
 
@@ -45,6 +49,7 @@
                 canvas = document.getElementById("mCanv");
                 score = 0;
                 timeLeft = 0;
+                Lives = 3;
                 // create a new stage and point it at our canvas:
                 stage = new createjs.Stage(canvas);
                 // grab canvas width and height for later calculations:
@@ -117,6 +122,7 @@
                 background = new createjs.Bitmap(backgroundImage);
                 frogImage = preload.getResult("frog");
                 lilyPadImage = preload.getResult("lilyPad");
+                TopGrass = new createjs.Bitmap(preload.getResult("topGrass"));
                 //changing the label accordingly and updating the stage to show it
                 loadProgressLabel.text = "Loading complete click to start";
                 stage.update();
@@ -139,12 +145,15 @@
                 stage.update();
                 score = 0;
                 timeLeft = 0;
+                Lives = 3;
             }
 
 
             function startGame() {
                 stage.addChild(background);
-
+                TopGrass.x = 0;
+                TopGrass.y = 47;
+                stage.addChild(TopGrass);
                 scoreDisplay = new createjs.Text();
                 scoreDisplay.textAlign = "right";
                 scoreDisplay.x = 135;
@@ -185,16 +194,30 @@
             }
 
             function tick() {
+                if (DeathSprite) {
+                    if (DeathSprite.alive == false) {
+                        stage.removeChild(DeathSprite);
+                        DeathSprite = null;
+                    }
+                }
                 for (i = 0; i < 6; i++) {
                     var lilyPad = LilyPads[i];
                     var intersection = collisionMethod(Hero, lilyPad, window.alphaThresh);
                     if (intersection) {
-                        Hero.x = 225;
-                        Hero.y = 499;
-                        score += 225;
-                        scoreDisplay.text = score;
-                        lilyPad.gotoAndPlay("frog");
+                        if (lilyPad.currentFrame == 1) {//DIE: Jumping into a home already occupied by a frog
+                            HeroDie();
+                        } else { //WIN
+                            Hero.x = 225;
+                            Hero.y = 499;
+                            score += 225;
+                            scoreDisplay.text = score;
+                            lilyPad.gotoAndPlay("frog");
+                        }
                     }
+                }
+                var topGrassHit = collisionMethod(Hero, TopGrass, window.alphaThresh);
+                if (topGrassHit) {//DIE: Jumping into the side of a home or the bush
+                    HeroDie();
                 }
 
                 // Update logic of the hero
@@ -203,6 +226,28 @@
 
                 // update the stage:
                 stage.update();
+            }
+
+            function HeroDie() {
+                DeathSprite = Hero.clone();
+                if (Hero.direction == -2) {
+                    DeathSprite.gotoAndPlay("die_v");
+                } else if (Hero.direction == 2) {
+                    DeathSprite.gotoAndPlay("die");
+                } else if (Hero.direction == 1) {
+                    DeathSprite.gotoAndPlay("dieH");
+                } else if (Hero.direction == -1) {
+                    DeathSprite.gotoAndPlay("dieH_h");
+                } else {
+                    DeathSprite.gotoAndPlay("die");
+                }
+                DeathSprite.onAnimationEnd = function(bitmap, animation)
+                {
+                    DeathSprite.alive = false;
+                };
+                Hero.x = 225;
+                Hero.y = 499;
+                Lives -= 1;
             }
 
             function handleKeyDown(e) {

@@ -23,13 +23,16 @@
     Frog.prototype.initialize = function (frogName, imgFrog, x_end) {
         var localSpriteSheet = new createjs.SpriteSheet({
             images: [imgFrog],
-            frames: { width: 30, height: 30, count: 8,regX: 15,regY:15 },
+            frames: { width: 30, height: 30, count: 25,regX: 15,regY:15 },
             animations: {
                 // start, end, next, frequency
                 hop: [0, 3, "idle"],
                 hopH: [4,7,"idleH"],
                 idle: 0,
-                idleH: 4
+                idleH: 4,
+                die:[8,15,"death"],
+                dieH: [16, 23, "death"],
+                death:24
             }
         });
 
