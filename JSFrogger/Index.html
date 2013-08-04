@@ -40,6 +40,8 @@
             var scoreDisplay;
             var Lives;
             var DeathSprite;
+            var Cars;
+            var carImage,carImageBlue;
 
             collisionMethod = ndgmr.checkPixelCollision;
             window.alphaThresh = 0.75;
@@ -122,6 +124,7 @@
                 background = new createjs.Bitmap(backgroundImage);
                 frogImage = preload.getResult("frog");
                 lilyPadImage = preload.getResult("lilyPad");
+                carImage=preload.getResult("car");
                 TopGrass = new createjs.Bitmap(preload.getResult("topGrass"));
                 //changing the label accordingly and updating the stage to show it
                 loadProgressLabel.text = "Loading complete click to start";
@@ -178,7 +181,15 @@
                     LilyPads[i] = lilPad;
                     stage.addChild(LilyPads[i]);
                 }
-
+                //290, increments of 30 for car lanes
+                Cars = new Array();
+                for (i = 0; i < 4; i++) {
+                    var car = new Vehicle("redCar" + i, carImage, screen_width);
+                    car.x = -50;
+                    car.y = 305;
+                    Cars[i] = car;
+                    stage.addChild(car);
+                }
                 // Creating the Hero
                 Hero = new Frog("frog",frogImage, screen_width);
                 Hero.x = 225;
@@ -222,7 +233,13 @@
 
                 // Update logic of the hero
                 Hero.tick();
-
+                for (i = 0; i < Cars.length; i++) {
+                    var carHit = collisionMethod(Hero, Cars[i], window.alphaThresh);
+                    if (carHit) {
+                        HeroDie();
+                    }
+                    Cars[i].tick();
+                }
 
                 // update the stage:
                 stage.update();
