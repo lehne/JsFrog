@@ -185,7 +185,7 @@
                 Cars = new Array();
                 for (i = 0; i < 4; i++) {
                     var car = new Vehicle("redCar" + i, carImage, screen_width);
-                    car.x = -50;
+                    car.x = -125+125*i;
                     car.y = 305;
                     Cars[i] = car;
                     stage.addChild(car);
